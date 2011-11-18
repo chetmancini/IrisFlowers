@@ -1,3 +1,19 @@
+#######################################
+######### Irises Classification #######
+# Version: 0.1
+#
+# Author: Chet Mancini
+# Email: cam479 at cornell dot edu
+# Web: chetmancini.com
+# Warranty: None at all
+#
+# CS4700, Fall 2011
+# Cornell University
+#
+#######################################
+
+
+
 import math
 
 '''
