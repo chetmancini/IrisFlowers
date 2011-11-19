@@ -12,24 +12,26 @@
 #
 #######################################
 
+
+############## IMPORTS  ###############
+import math
+
+
 '''
 Calculate mean and stddev of a set
 '''
 def meanstdv(x):
-    from math import sqrt
     n, mean, std = len(x), 0, 0
     for a in x:
 		mean = mean + a
     mean = mean / float(n)
     for a in x:
 		std = std + (a - mean)**2
-    std = sqrt(std / float(n-1))
+    std = math.sqrt(std / float(n-1))
     return mean, std
 
-
-
 '''
-dot product of two vectors
+Dot product of two vectors
 '''
 def dot(vect1, vect2):
 	toReturn = 0
@@ -40,14 +42,14 @@ def dot(vect1, vect2):
 	return toReturn
 
 '''
-multiply a vector by a scalar
+Multiply a vector by a scalar
 '''
 def multVect(scalar, vect):
 	return [x * scalar for x in vect]
 
 
 '''
-add two vectors together --> vector
+Add two vectors together --> vector
 '''
 def addVect(vect1, vect2):
 	toReturn = []
@@ -77,6 +79,7 @@ def accuracy(truePositive, trueNegative, falsePositive, falseNegative):
 		return 0
 	else:
 		return 100*(truePositive + trueNegative) / (falsePositive + falseNegative + trueNegative + truePositive)
+
 '''
 Helper function for f-measure
 '''

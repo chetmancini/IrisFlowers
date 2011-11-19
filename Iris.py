@@ -13,13 +13,22 @@
 #######################################
 
 
+############## IMPORTS  ###############
+from __future__ import division
+import math
+import random
+import sys
+
 '''
 Iris object
 '''
 class Iris:
 
+	'''
+	Dictionary of values to iris name
+	'''
 	class2name = {
-		0:'unknown',
+		0:'NULL',
 		1:'setosa',
 		2:'versicolor',
 		3:'viginica'
@@ -37,6 +46,9 @@ class Iris:
 		self.realClass = items[4]
 		self.foundClass = 0
 
+	'''
+	Euclidean distance between this feature vector and another.
+	'''
 	def distance(self, other):
 		distSum = 0
 		for i in range(len(self.features)):
@@ -70,6 +82,7 @@ class Iris:
 Iris Dataset
 '''
 class IrisDataset:
+	fullset = []
 
 	trainingSet = []
 	testSet = []
@@ -78,16 +91,43 @@ class IrisDataset:
 	'''
 	Constructor
 	'''
-	def __init__(self):
-		pass
+	def __init__(self, normalize=True):
+		self.readFile("dataset.csv")
+		self.numFeatures = len(fullset[0].features)
+		random.shuffle(self.fullset)
+		#self.normalize()
+		self.normalizeScale()
 
 	'''
 	Read File
 	'''
-	def readFile(self):
-		filename = "dataset.csv"
-		with open(dataset, 'r') as f:
+	def readFile(self, filename="dataset.csv"):
+		with open(filename, 'r') as f:
 			for line in f:
 				iris = Iris(line)
-				self.irises.append(iris)
+				self.fullset.append(iris)
 
+	'''
+	normalize to a normal distribution
+	'''
+	def normalize(self):
+		for i in range(self.numFeatures):
+			currentList = []
+			for node in self.fullset:
+				currentList.append(node.features[i])
+			mean, stdev = meanstdv(currentList)
+			for node in self.fullset:
+				node.features[i] = (node.features[i] - mean) / stdev
+
+	'''
+	Normalize to a scale
+	'''
+	def normalizeScale(self):
+		for i in range(self.numFeatures):
+			currentList = []
+			for node in self.fullset:
+				currentList.append(node.features[i])
+			minval = min(currentList)
+			maxval = max(currentList)
+			for node in self.fullset:
+				node.features[i] = (node.features[i] - minval) / (maxval - minval)

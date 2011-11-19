@@ -13,10 +13,16 @@
 #######################################
 
 
-#######################################
 ############## IMPORTS  ###############
+from __future__ import division
+from Iris import *
+from HelperFunctions import *
 import math
 
+############## GLOBALS  ###############
+
+
+############## CLASSES  ###############
 
 '''
 Perceptron
@@ -26,16 +32,16 @@ class Perceptron:
 	Constructor.
 	Takes a training set and a test set
 	'''
-	def __init__(self, trainingset, testset):
+	def __init__(self, dataset):
+		self.dataset = dataset
 		self.numFeatures = len(trainingset[0].features)
-		self.trainingset = trainingset
-		self.testset = testset
-
-	
+		self.trainingset = None
+		self.testset = None
+		self.validationSet = None
 
 
 '''
-build a hyperplane
+Build a hyperplane
 '''
 def buildHyperplane(rate=0.1, runs=1000):
 	w = [0] * numFeatures
@@ -46,36 +52,27 @@ def buildHyperplane(rate=0.1, runs=1000):
 				w = addVect(w, multVect(scaleFactor, node.features))
 	return w
 
-
 '''
-normalize
+hypothesis
 '''
-def normalize(dataList):
-	for i in range(30):
-		currentList = []
-		for node in dataList:
-			currentList.append(node.features[i])
-		mean, stdev = meanstdv(currentList)
-		for node in dataList:
-			node.features[i] = (node.features[i] - mean) / stdev
-
-def normalizeScale(dataList):
-	for i in range(30):
-		currentList = []
-		for node in dataList:
-			currentList.append(node.features[i])
-		minval = min(currentList)
-		maxval = max(currentList)
-		for node in dataList:
-			node.features[i] = (node.features[i] - minval) / (maxval - minval)
+def hypothesis(w, xNode):
+	if dot(w, xNode.features) > 0:
+		return 1
+	else:
+		return -1
 
 
-	
-def RunTests():
-	pass
 
+############## Run  ###############
+'''
+Run perceptron learning
+'''
 def Run():
-	RunTests()
+	dataset = IrisDataset()
+	perceptron = new Perceptron(dataset)
 
+'''
+Bootstrap
+'''
 if __name__ == "__main__":
 	Run()
