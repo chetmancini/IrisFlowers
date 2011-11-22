@@ -28,8 +28,8 @@ Vector is a list of doubles.
 '''
 Create a zero matrix
 '''
-def zero(rows, cols):
-    return [[0 for col in range(cols)] for row in range(rows)]
+def zeroMatrix(rows, cols):
+    return [[0.0 for col in range(cols)] for row in range(rows)]
 
 
 '''

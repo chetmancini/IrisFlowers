@@ -15,9 +15,11 @@
 
 ############## IMPORTS  ###############
 from __future__ import division
+from HelperFunctions import *
 import math
 import random
 import sys
+import copy
 
 '''
 Iris object
@@ -38,12 +40,16 @@ class Iris:
 	Constructor
 	'''
 	def __init__(self, inputStr=None):
-		items = inputStr.split(',')
-		self.features = []
-		for i in range(3):
-			self.features.append(float(items[i]))
-		self.features.append(1)
-		self.realClass = items[4]
+		if inputStr:
+			items = inputStr.split(',')
+			self.features = []
+			for i in range(4):
+				self.features.append(float(items[i]))
+			self.features.append(1)
+			self.realClass = int(items[4])
+		else:
+			self.features = []
+			self.realClass = 0
 		self.foundClass = 0
 
 	'''
@@ -76,27 +82,51 @@ class Iris:
 	def getName(self):
 		return class2name[self.foundClass]
 
+	'''
+	Get Y
+	'''
+	def getY(self, classifyId):
+		if self.realClass == classifyId:
+			return 1
+		else:
+			return -1
 
+	'''
+	String version of iris
+	'''
+	def asString(self):
+		return str(self.features) + str(self.realClass)
+
+	'''
+	Clone class
+	'''
+	def clone(self):
+		toReturn = Iris()
+		toReturn.features = copy.deepcopy(self.features)
+		toReturn.realClass = self.realClass
+		toReturn.foundClass = self.foundClass
+		return toReturn
 
 '''
 Iris Dataset
 '''
 class IrisDataset:
-	fullset = []
 
-	trainingSet = []
-	testSet = []
-	validationSet = []
+	'''
+	the dataset of irises as a list
+	'''
+	fullset = []
 
 	'''
 	Constructor
 	'''
 	def __init__(self, normalize=True):
 		self.readFile("dataset.csv")
-		self.numFeatures = len(fullset[0].features)
+		self.numFeatures = len(self.fullset[0].features)
 		random.shuffle(self.fullset)
-		#self.normalize()
-		self.normalizeScale()
+		if normalize:
+			self.normalizeStdNorm()
+		#self.normalizeScale()
 
 	'''
 	Read File
@@ -107,11 +137,14 @@ class IrisDataset:
 				iris = Iris(line)
 				self.fullset.append(iris)
 
+	def shuffleData(self):
+		random.shuffle(self.fullset)
+
 	'''
 	normalize to a normal distribution
 	'''
-	def normalize(self):
-		for i in range(self.numFeatures):
+	def normalizeStdNorm(self):
+		for i in range(self.numFeatures - 1):
 			currentList = []
 			for node in self.fullset:
 				currentList.append(node.features[i])
@@ -130,4 +163,21 @@ class IrisDataset:
 			minval = min(currentList)
 			maxval = max(currentList)
 			for node in self.fullset:
+				if maxval - minval == 0:
+					print maxval, minval, 0
 				node.features[i] = (node.features[i] - minval) / (maxval - minval)
+
+
+	'''
+	Partition
+	'''
+	def partition(self, fold, kfolds):
+		length = len(self.fullset)
+		validationSet = []
+		trainingSet = []
+		for i in range(length):
+			if i >= math.floor(fold*(length/kfolds)) and i <= math.floor((fold+1)*(length/kfolds)):
+				validationSet.append(self.fullset[i].clone())
+			else:
+				trainingSet.append(self.fullset[i].clone())
+		return trainingSet, validationSet
